@@ -28,11 +28,7 @@ const links = [
     label : 'Create Shipment' ,
     path : '/create-shipment'
   }
-  ,
-  {
-    label : 'Approve Shipment' ,
-    path : '/approve-shipment'
-  }
+  
 ]
 
 export default function SellerDashboardLayout({ children }) {

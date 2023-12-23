@@ -20,7 +20,7 @@ function ShipmentMap() {
   const [ shipment , setShipment ] = useState({})
   const { isLoaded , google } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: "AIzaSyAvXx4ecd57yMMdNqZWS2X5NEG3jR5rydU"   
+    googleMapsApiKey: process.env.REACT_APP_API_KEY 
   })
 
   const [map, setMap] = React.useState(null)
@@ -28,7 +28,7 @@ function ShipmentMap() {
 
   const calculateRoute = async ( from , to ) => {
 
-    if (!window.google) {
+    if (!window.google || !window.google.maps) {
       console.error('google not loaded')
       return;
     }
