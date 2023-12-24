@@ -14,21 +14,21 @@ const center = {
   lng: 73.025331
 };
 
-function ShipmentMap() {
+function VehicleRoute() {
 
   const { id } = useParams()
-  const [ shipment , setShipment ] = useState({})
+  const [ vehicle , setVehicle ] = useState({})
+  const [ waypoints, setWaypoints ] = useState([])
   const { isLoaded , google } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: 'apikey'
   })
-  console.log(process.env.REACT_APP_API_KEY)
   const [map, setMap] = React.useState(null)
   const [directionResponse , setDirectionResponse] = useState(null)
 
-  const calculateRoute = async ( from , to ) => {
+  const calculateRoute = async ( from , to , waypoints ) => {
 
-    if (!window.google || !window.google.maps) {
+    if (!window.google || !window.google.maps || !window.google.maps.DirectionsService) {
       console.error('google not loaded')
       return;
     }
@@ -36,7 +36,9 @@ function ShipmentMap() {
     const directionService = new window.google.maps.DirectionsService()
     const results = await directionService.route({
       origin : from ,
-      destination : to ,
+      destination : waypoints.length === 0 ? to : waypoints[ waypoints.length - 1 ]?.location,
+      waypoints : waypoints ,
+      optimizeWaypoints: true,
       travelMode  : window.google.maps.TravelMode.DRIVING
     })
     setDirectionResponse(results)
@@ -47,28 +49,51 @@ function ShipmentMap() {
     ( async () => {
 
       try{
-
-        const { data } = await axiosInstance.get("/shipment/" + id)
-        setShipment(data.shipment)
-        calculateRoute( data.shipment.from , data.shipment.address)
+        const { data } = await axiosInstance.get("/vehicle/shipment-by-vehicle/" + id)
+        const shipments = data.data
+        const waypoints = shipments.map(shipment => ( {location : shipment.address , stopover : true } ) )
+        console.log(waypoints)
+        setWaypoints(waypoints)
       }
       catch(err){
         console.error(err)
       }
 
-    })()
+    })() ;
+
+    ( async () => {
+
+      try{
+        const { data } = await axiosInstance.get("/vehicle/" + id)
+        const vehicle = data.data
+        console.log(vehicle)
+        setVehicle(vehicle)
+      }
+      catch(err){
+        console.error(err)
+      }
+
+    })() ;
+
   },[])
 
-  console.log(shipment)
+  //calculate route when google script is properly loaded
+  useEffect( () => {
+    calculateRoute( vehicle.from , vehicle.to , waypoints )
+  } , [window.google , window.google?.maps , window.google?.maps?.DirectionsService , waypoints])
 
 
-  return isLoaded ? (
+
+  console.log(vehicle)
+
+
+  return (isLoaded )? (
     <>
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
         zoom={12}
-        onLoad={map => {setMap(map)} }
+        onLoad={map => {setMap(map) } }
       >
         <Marker position={center} />
         {directionResponse && <DirectionsRenderer directions={directionResponse} />}
@@ -77,4 +102,4 @@ function ShipmentMap() {
   ) : <h3 style={{textAlign:'center'}}>Loading Map...</h3>
 }
 
-export default React.memo(ShipmentMap)
+export default React.memo(VehicleRoute)

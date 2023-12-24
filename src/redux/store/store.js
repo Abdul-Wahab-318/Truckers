@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
-import seller from '../slices/sellerSlice'
+import user from '../slices/userSlice'
 export default configureStore({
   reducer: {
-    seller
+    user
   },
 })

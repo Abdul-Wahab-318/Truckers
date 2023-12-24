@@ -10,11 +10,11 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 //import axios from 'axiosInstance';
 import { useDispatch } from 'react-redux'
-import { login } from '../../redux/slices/sellerSlice';
+import { login } from '../../redux/slices/userSlice';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link , useNavigate } from 'react-router-dom';
-//import { signin } from 'api/seller';
+import { signin } from '../../api/seller';
 
 export default function Signin() {
 
@@ -25,9 +25,7 @@ export default function Signin() {
     const handleSubmit = async ( body ) => {
 
       setIsLoading(true)
-      const signin = () => {
-        
-      }
+
       try{
 
         let payload = await signin(body)
@@ -35,11 +33,15 @@ export default function Signin() {
         dispatch(login(payload))
         toast.success("Signed In")
         
-        navigate('/')
-  
+        if ( payload.userType === "admin" )
+          navigate('/')
+        else
+          navigate('/driver')
+        
       }
       catch(errorMessage)
       {
+        console.error(errorMessage)
         toast.error(errorMessage)
       }
   
@@ -70,6 +72,7 @@ export default function Signin() {
         formik.resetForm()
       },
     });
+
   
     return (
         <Container component="main" maxWidth="xs">
@@ -100,6 +103,22 @@ export default function Signin() {
                     onBlur={formik.handleBlur}
                     error={formik.touched.email && Boolean(formik.errors.email)}
                     helperText={formik.touched.email && formik.errors.email}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    required
+                    fullWidth
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    autoComplete="new-password"
+                    value={formik.values.password}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.password && Boolean(formik.errors.password)}
+                    helperText={formik.touched.password && formik.errors.password}
                   />
                 </Grid>
                 <Grid item xs={12}>

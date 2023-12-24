@@ -1,4 +1,4 @@
-import React ,{useState} from 'react'
+import React ,{useState , useEffect} from 'react'
 import CustomBox from '../../Components/CustomBox/CustomBox'
 import CustomButton from '../../Components/CustomButton/CustomButton'
 import { Box, FormControl, Select, TextField, Typography } from '@mui/material'
@@ -16,7 +16,6 @@ export default function CreateShipment() {
     let [ address , setAddress ] = useState('')
     let [ weight , setWeight ] = useState('')
     let [ vehicle , setVehicle ] = useState('')
-    console.log(address)
     let [ vehicles , setVehicles ] = useState([
         {
             id : 'V-002' ,
@@ -75,7 +74,21 @@ export default function CreateShipment() {
     const handleSelectChange = ( handler , state ) => {
         handler(state)
     }
-console.log(vehicles.filter( v => ( v.from == from && v.to === to )))
+
+    useEffect(() => {
+        ( async () => {
+            try{
+                let { data } = await axiosInstance.get('/vehicle/vehicles/filtered')
+                setVehicles(data.data)
+                console.log(data.data)
+            }
+            catch(err)
+            {
+                console.log(err)
+            }
+        })()
+    },[])
+
   return (
 
     <CustomBox sx={{maxWidth : '800px' , marginX : 'auto'}}>
@@ -92,9 +105,10 @@ console.log(vehicles.filter( v => ( v.from == from && v.to === to )))
                 onChange={(e)=>handleSelectChange( setFrom , e.target.value)}
                 
                 >
-                <MenuItem value={'attock'}>attock</MenuItem>
-                <MenuItem value={'islamabad'}>islamabad</MenuItem>
-                <MenuItem value={'rawalpindi'}>rawalpindi</MenuItem>
+                    {
+                        vehicles.map( (vehicle , ind) => <MenuItem key={ind} value={vehicle.from}>{vehicle.from}</MenuItem> )
+                    }
+
             </Select>
         </FormControl>
 
@@ -109,9 +123,9 @@ console.log(vehicles.filter( v => ( v.from == from && v.to === to )))
             onChange={(e)=>handleSelectChange(setTo , e.target.value)}
             
             >
-                <MenuItem value={'attock'}>attock</MenuItem>
-                <MenuItem value={'islamabad'}>islamabad</MenuItem>
-                <MenuItem value={'rawalpindi'}>rawalpindi</MenuItem>
+                {
+                    vehicles.map( (vehicle , ind) => <MenuItem key={ind} value={vehicle.to}>{vehicle.to}</MenuItem> )
+                }
             </Select>
         </FormControl>
 
@@ -119,7 +133,7 @@ console.log(vehicles.filter( v => ( v.from == from && v.to === to )))
             <GooglePlacesAutocomplete
             placeholder="Address"
             selectProps={{ address , onChange : setAddress , placeholder : 'Address'  }}
-            apiKey="AIzaSyAvXx4ecd57yMMdNqZWS2X5NEG3jR5rydU"
+            apiKey="apikey"
             />
         </Box>
 
@@ -153,7 +167,7 @@ console.log(vehicles.filter( v => ( v.from == from && v.to === to )))
 
                     >
                         {
-                            vehicles.filter( v => ( v.from == from && v.to === to )).map( v =>  <MenuItem key={v.id} value={v.id}> {v.name} </MenuItem>)    
+                            vehicles.filter( v => ( v.from == from && v.to === to )).map( v =>  <MenuItem key={v._id} value={v._id}> {v.id} </MenuItem>)    
                         }
                     </Select>
                 </>

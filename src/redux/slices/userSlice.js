@@ -1,27 +1,24 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-export const sellerSlice = createSlice({
-  name: 'seller',
+export const userSlice = createSlice({
+  name: 'user',
   initialState: {
     value : {
-      id : null ,
-      name : '' ,
+      _id : null ,
       email : '' ,
-      token : '' ,
       isLoggedIn : false 
     }
   },
   reducers: {
 
     login: (state , action) => {
-      state.value = action.payload
+      state.value = { ...action.payload , isLoggedIn : true }
     },
 
     logout: (state) => {
       state .value = {
         name : '' ,
         email : '' ,
-        token : '' ,
         isLoggedIn : false 
       }
     }
@@ -30,5 +27,5 @@ export const sellerSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { login, logout  } = sellerSlice.actions
-export default sellerSlice.reducer
+export const { login, logout  } = userSlice.actions
+export default userSlice.reducer

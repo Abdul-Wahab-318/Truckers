@@ -1,4 +1,4 @@
-import * as React from 'react';
+import  React , { useEffect} from 'react';
 import CustomButton from '../../Components/CustomButton/CustomButton';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -6,37 +6,53 @@ import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 //import axios from '../../axiosInstance.js';
 import { useDispatch } from 'react-redux'
-import { login } from '../../redux/slices/sellerSlice';
+import { login } from '../../redux/slices/userSlice';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { Link } from 'react-router-dom';
-//import { signup } from 'api/seller';
+import { Link, useNavigate } from 'react-router-dom';
+import { signup } from '../../api/seller';
+import axiosInstance from '../../axiosInstance';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import { FormControl , Select } from '@mui/material';
 
 export default function Signup() {
 
+  const nav = useNavigate()
   const dispatch = useDispatch()
   const [ isLoading , setIsLoading ] = React.useState(false)
+  const [ isDriver , setIsDriver ] = React.useState(false)
+  const [ vehicles , setVehicles ] = React.useState([])
+  const [ vehicleAssigned , setVehicleAssigned ] = React.useState(false)
 
   const handleSubmit = async ( body ) => {
 
     setIsLoading(true)
-    const signup = () => {
-      
-    }
+
     try{
       let payload = await signup(body)
 
       dispatch(login(payload))
       toast.success("Signed Up")
+      
+      if ( payload.userType === 'driver')
+        nav("/driver")
+      else
+        nav("/")
+      
+
     }
     catch(error)
     {
       console.log(error)
-      toast.error(error)
+      toast.error(error.data.error)
     }
 
     setIsLoading(false)
@@ -77,10 +93,32 @@ export default function Signup() {
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {
-      handleSubmit(values)
+
+      if ( !vehicleAssigned ) return
+
+      const userType = isDriver ? 'driver' : 'admin'
+      handleSubmit({ ...values , userType , vehicleAssigned })
       formik.resetForm()
     },
   });
+
+  useEffect( () => {
+
+    ( async () => {
+
+      try{
+        let {data} = await axiosInstance.get('/vehicle/vehicles/filtered') ;
+        setVehicles(data.data)
+      }
+      catch(err)
+      {
+        console.error(err)
+      }
+
+    })() ;
+
+  } ,[] )
+
 
   return (
       <Container component="main" maxWidth="xs">
@@ -161,7 +199,37 @@ export default function Signup() {
                   helperText={formik.touched.password_confirmation && formik.errors.password_confirmation}
                 />
               </Grid>
+              {
+                isDriver ? 
+                <Grid item xs={12}>
+                  <FormControl fullWidth>
+                    <InputLabel id="vehicleLabel">Vehicle Assigned</InputLabel>
+                    <Select
+                        fullWidth
+                        labelId="vehicleLabel"
+                        id="vehicle"
+                        value={vehicleAssigned}
+                        label="Vehicle Assigned"
+                        onChange={(e)=>setVehicleAssigned(e.target.value)}
+                        
+                        >
+                          {
+                            vehicles.map( (vehicle , ind) => <MenuItem key={ind} value={vehicle._id}>{vehicle.id}</MenuItem> )
+                          }
+
+                    </Select>
+                  </FormControl>
+                  { isDriver && <p style={{'fontSize' : '12px' , color: 'red' , padding : '10px' , margin : 0}}>Select Vehicle</p>}
+                </Grid>
+                :
+                <></>
+              }
             </Grid>
+
+            <FormGroup>
+              <FormControlLabel control={<Checkbox onChange={(e) => setIsDriver(e.target.checked)} />} label="Sign up as Driver" />
+            </FormGroup>
+
             <CustomButton
               type="submit"
               fullWidth

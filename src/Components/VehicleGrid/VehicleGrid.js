@@ -4,7 +4,7 @@ import { Button, Switch , Stack, useTheme} from '@mui/material'
 import axiosInstance from '../../axiosInstance'
 import { Link } from 'react-router-dom/dist'
 
-export default function ShipmentGrid() {
+export default function VehicleGrid() {
     
     const theme = useTheme()
     const editBtnStyle = {
@@ -21,14 +21,14 @@ export default function ShipmentGrid() {
             
     }
 
-    const [ shipments , setShipments ] = useState([])
+    const [ vehicles , setVehicles ] = useState([])
 
     const columns = [
         {
             field: 'id',
-            headerName: 'Shipment id',
+            headerName: 'Vehicle id',
             valueGetter : ( params ) => {
-                return params.row.id.toString().slice(-6)
+                return params.row.id
             } , 
             editable: false,
             flex : 1
@@ -47,18 +47,12 @@ export default function ShipmentGrid() {
             flex : 1
         },
         {
-            field: 'status',
-            headerName: 'Current Status',
-            editable: false,
-            flex : 1
-        },
-        {
             field: 'track',
-            headerName: 'Track',
+            headerName: 'View Route',
             editable: true,
             renderCell : (params) => {
                 return (
-                    <Link to={'/Shipment-map/' + params.row._id}
+                    <Link to={'/vehicle-route/' + params.row._id}
                      sx={{...editBtnStyle}}>
                         View
                     </Link>
@@ -72,9 +66,9 @@ export default function ShipmentGrid() {
     useEffect(() => {
         ( async () => {
             try{
-                const { data } = await axiosInstance.get("/shipment/shipments") 
+                const { data } = await axiosInstance.get("/vehicle/vehicles") 
                 console.log(data)
-                setShipments( data.data )
+                setVehicles( data.data )
             }
             catch(err)
             {
@@ -83,17 +77,11 @@ export default function ShipmentGrid() {
         })()
     } , [])
 
-    const handleSwitchToggle = (e) => {
-        if ( e.target.checked )
-            console.log("Switch checked")
-        else   
-            console.log("Switch unchecked")
-    }
 
-    if ( shipments.length === 0 )
-        return <h4 style={{'textAlign':'center' , 'margin':0}}>No Shipments</h4>
+    if ( vehicles.length === 0 )
+        return <h4 style={{'textAlign':'center' , 'margin':0}}>No vehicles</h4>
 
   return (
-    <CustomDataGrid columns={columns} rows={shipments} style={gridStyle} />
+    <CustomDataGrid columns={columns} rows={vehicles} style={gridStyle} />
   )
 }

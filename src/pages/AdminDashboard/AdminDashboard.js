@@ -1,12 +1,13 @@
 import { Box , Grid, Stack, Typography } from '@mui/material'
 import React from 'react'
 import CustomButton from "../../Components/CustomButton/CustomButton.js"
-import CustomBox from '../../Components/CustomBox/CustomBox'
-import PageTitle from '../../Components/PageTitle/PageTitle'
-import SectionTitle from '../../Components/SectionTitle/SectionTitle'
+import CustomBox from '../../Components/CustomBox/CustomBox.js'
+import PageTitle from '../../Components/PageTitle/PageTitle.js'
+import SectionTitle from '../../Components/SectionTitle/SectionTitle.js'
 import Stats from "../../Components/Stats/Stats.js"
 import CustomDropdown from '../../Components/CustomDropdown/CustomDropdown.js'
 import ShipmentGrid from '../../Components/ShipmentGrid/ShipmentGrid.js'
+import VehicleGrid from '../../Components/VehicleGrid/VehicleGrid.js'
 
 export default function SellerDashboard() {
 
@@ -41,8 +42,17 @@ export default function SellerDashboard() {
                 <CustomBox>
                     <Stats stats={STATS} />
                 </CustomBox>
+                <PageTitle >
+                    Shipments
+                </PageTitle>
                 <CustomBox>
                     <ShipmentGrid/>
+                </CustomBox>
+                <PageTitle >
+                    Vehicles
+                </PageTitle>
+                <CustomBox>
+                    <VehicleGrid/>
                 </CustomBox>
 
             </Grid>

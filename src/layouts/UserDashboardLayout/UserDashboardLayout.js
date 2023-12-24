@@ -17,9 +17,12 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { AppBar } from '@mui/material';
 import { logout } from '../../api/seller';
+import { logout as logoutRedux } from '../../redux/slices/userSlice';
+import { useDispatch } from 'react-redux';
+import store from '../../redux/store/store';
 
 const drawerWidth = 350;
-const links = [
+const adminlinks = [
   {
     label : 'Dashboard' ,
     path : '/'
@@ -27,11 +30,28 @@ const links = [
   {
     label : 'Create Shipment' ,
     path : '/create-shipment'
+  } ,
+  {
+    label : 'Create Vehicle' ,
+    path : '/create-vehicle'
   }
   
 ]
 
-export default function SellerDashboardLayout({ children }) {
+const driverlinks = [
+  {
+    label : 'Dashboard' ,
+    path : '/driver'
+  } ,
+  {
+    label : 'View Route' ,
+    path : '/driver/driver-route'
+  } ,
+]
+
+
+
+export default function UserDashboardLayout({ children }) {
 
     const [ openSideBar , setOpenSideBar ] = React.useState(false)
 
@@ -99,8 +119,10 @@ export default function SellerDashboardLayout({ children }) {
 const DrawerItems = ({ toggleDrawer = () => {} }) => {
 
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { pathname } = useLocation()
-
+  const userType = store.getState().user.value.userType
+  const links = userType === 'admin' ? adminlinks : driverlinks
   const activeLinkStyle = {
     bgcolor : 'rgba(0, 0, 0, 0.04)'
   }
@@ -110,6 +132,7 @@ const DrawerItems = ({ toggleDrawer = () => {} }) => {
     try{
 
       let data  = await logout()
+      dispatch(logoutRedux())
       navigate("/signin")
       
     }
