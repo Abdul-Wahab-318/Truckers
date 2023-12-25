@@ -67,7 +67,6 @@ export default function VehicleGrid() {
         ( async () => {
             try{
                 const { data } = await axiosInstance.get("/vehicle/vehicles") 
-                console.log(data)
                 setVehicles( data.data )
             }
             catch(err)

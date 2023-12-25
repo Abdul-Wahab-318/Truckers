@@ -9,7 +9,6 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import UserDashboardLayout from "./layouts/UserDashboardLayout/UserDashboardLayout"
 import Signup from "./pages/Signup/Signup";
 import Signin from "./pages/Signin/Signin";
-import store from "./redux/store/store";
 import { useNavigate } from "react-router-dom";
 import RouteProtection from "./Components/RouteProtection/RouteProtection";
 import CreateShipment from "./pages/CreateShipment/CreateShipment";
@@ -20,6 +19,7 @@ import VehicleRoute from "./pages/VehicleRoute/VehicleRoute";
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
 import DriverDashboard from "./pages/DriverDashboard/DriverDashboard";
 import DriverRoute from "./pages/DriverRoute/DriverRoute";
+import { socket } from "./socket";
 
 const theme = createTheme({
   palette: {
@@ -38,14 +38,22 @@ const theme = createTheme({
 
 function App() {
 
+  useEffect(() => {
+    socket.connect()
+
+    return () => {
+      socket.disconnect()
+    }
+
+  },[])
+
   return (
     <ThemeProvider theme={theme}>
-
       <Router>
         <Routes>
 
-          <Route path="/" element={ <UserDashboardLayout/> }>
-            <Route element={<RouteProtection/>}>
+          <Route path="/" element={ <RouteProtection/> }>
+            <Route element={<UserDashboardLayout/>}>
               <Route index element={ <AdminDashboard/> } />
               <Route exact path="create-shipment" element={<CreateShipment/>} />
               <Route exact path="approve-shipment" element={<ApproveShipment/>} />
@@ -68,7 +76,6 @@ function App() {
 
         </Routes>
       </Router>
-
     </ThemeProvider>
   );
 }

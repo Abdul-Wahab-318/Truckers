@@ -3,6 +3,8 @@ import CustomDataGrid from '../../Components/CustomDataGrid/CustomDataGrid'
 import { Button, Switch , Stack, useTheme} from '@mui/material'
 import axiosInstance from '../../axiosInstance'
 import { Link } from 'react-router-dom/dist'
+import { socket } from '../../socket'
+import { ToastContainer , toast } from 'react-toastify'
 
 export default function ShipmentGrid() {
     
@@ -73,7 +75,6 @@ export default function ShipmentGrid() {
         ( async () => {
             try{
                 const { data } = await axiosInstance.get("/shipment/shipments") 
-                console.log(data)
                 setShipments( data.data )
             }
             catch(err)
@@ -83,17 +84,41 @@ export default function ShipmentGrid() {
         })()
     } , [])
 
-    const handleSwitchToggle = (e) => {
-        if ( e.target.checked )
-            console.log("Switch checked")
-        else   
-            console.log("Switch unchecked")
+    const handleShipmentStatusChange = (params) => {
+        
+        const updatedShipmentID = params.data._id
+        const shipmentNo = String(params.data.id).slice(-4)
+
+        toast.success(`Shipment #${shipmentNo} Delivered` )
+
+        setShipments((prevShipments) => {
+            const updatedShipments = prevShipments.map((shipment) =>
+                shipment._id === updatedShipmentID ? params.data : shipment
+            )
+            return updatedShipments;
+        })
+
     }
+
+    useEffect(() => {
+
+        socket.on("shipment-delivered" , handleShipmentStatusChange)
+
+        return () => {
+            socket.off("shipment-delivered" , handleShipmentStatusChange)
+        }
+
+    } ,[])
+
+
 
     if ( shipments.length === 0 )
         return <h4 style={{'textAlign':'center' , 'margin':0}}>No Shipments</h4>
 
   return (
-    <CustomDataGrid columns={columns} rows={shipments} style={gridStyle} />
+    <>
+        <CustomDataGrid columns={columns} rows={shipments} style={gridStyle} />
+        <ToastContainer/>
+    </>
   )
 }

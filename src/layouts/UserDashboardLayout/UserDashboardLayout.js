@@ -20,6 +20,8 @@ import { logout } from '../../api/seller';
 import { logout as logoutRedux } from '../../redux/slices/userSlice';
 import { useDispatch } from 'react-redux';
 import store from '../../redux/store/store';
+import { socket } from '../../socket';
+import { useEffect } from 'react';
 
 const drawerWidth = 350;
 const adminlinks = [
@@ -51,13 +53,25 @@ const driverlinks = [
 
 
 
-export default function UserDashboardLayout({ children }) {
-
-    const [ openSideBar , setOpenSideBar ] = React.useState(false)
-
-    const toggleDrawer = () => {
-      setOpenSideBar( state => !state )
+export default function UserDashboardLayout() {
+  
+  const user = store.getState().user.value
+  const addAdminToRoom = () => {
+    if (user.userType === "admin") {
+      socket.emit("identify", user.userType, user._id);
+      console.log("emitting room join event");
     }
+  }
+  
+  const [ openSideBar , setOpenSideBar ] = React.useState(false)
+
+  useEffect( () => {
+    addAdminToRoom()
+  } ,[] )
+
+  const toggleDrawer = () => {
+    setOpenSideBar( state => !state )
+  }
 
 
   return (

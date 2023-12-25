@@ -1,5 +1,5 @@
 import { Box , Grid, Stack, Typography } from '@mui/material'
-import React from 'react'
+import React, { useEffect } from 'react'
 import CustomButton from "../../Components/CustomButton/CustomButton.js"
 import CustomBox from '../../Components/CustomBox/CustomBox.js'
 import PageTitle from '../../Components/PageTitle/PageTitle.js'
@@ -25,6 +25,7 @@ export default function SellerDashboard() {
             value : 2000 
         }        
     ]
+
 
   return (
     <Box>
