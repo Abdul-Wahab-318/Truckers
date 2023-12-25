@@ -95,7 +95,7 @@ const ShipmentGrid = () => {
             editable: true,
             renderCell : (params) => {
                 return (
-                    <CustomButton sx={{...editBtnStyle}}>
+                    <CustomButton sx={{...editBtnStyle}} onClick={()=>handleCancel(params.row._id)}>
                        Cancel
                     </CustomButton>
                 )
@@ -126,6 +126,20 @@ const ShipmentGrid = () => {
             let { data } = await axiosInstance.put("/shipment/deliver/" + id ) 
             console.log(data)
             setShipments( shipments => shipments.map(shipment =>  shipment._id === id ? { ...shipment , status : 'delivered' } : shipment ) )
+        }
+        catch(err)
+        {
+            console.error(err)
+        }
+
+    }
+
+    const handleCancel = async ( id ) => {
+
+        try {
+            let { data } = await axiosInstance.put("/shipment/cancel/" + id ) 
+            console.log(data)
+            setShipments( shipments => shipments.map(shipment =>  shipment._id === id ? { ...shipment , status : 'cancelled' } : shipment ) )
         }
         catch(err)
         {

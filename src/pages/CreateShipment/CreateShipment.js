@@ -7,7 +7,6 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import axiosInstance from '../../axiosInstance';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
-import { Autocomplete } from '@react-google-maps/api'
 
 export default function CreateShipment() {
 

@@ -84,7 +84,7 @@ export default function ShipmentGrid() {
         })()
     } , [])
 
-    const handleShipmentStatusChange = (params) => {
+    const handleShipmentDelivered = (params) => {
         
         const updatedShipmentID = params.data._id
         const shipmentNo = String(params.data.id).slice(-4)
@@ -100,12 +100,34 @@ export default function ShipmentGrid() {
 
     }
 
+    const handleShipmentCancelled = (params) => {
+        
+        const updatedShipmentID = params.data._id
+        const shipmentNo = String(params.data.id).slice(-4)
+        console.log("cancelled shipment")
+        toast.error(`Shipment #${shipmentNo} Cancelled` )
+
+        setShipments((prevShipments) => {
+            const updatedShipments = prevShipments.map((shipment) =>
+                shipment._id === updatedShipmentID ? params.data : shipment
+            )
+            return updatedShipments;
+        })
+
+    }
+
     useEffect(() => {
 
-        socket.on("shipment-delivered" , handleShipmentStatusChange)
+        try{
+            socket.on("shipment-delivered" , handleShipmentDelivered)
+            socket.on("shipment-cancelled" , handleShipmentCancelled)
+        }catch(error){
+            console.error(error)
+        }
 
         return () => {
-            socket.off("shipment-delivered" , handleShipmentStatusChange)
+            socket.off("shipment-delivered" , handleShipmentDelivered)
+            socket.off("shipment-cancelled" , handleShipmentCancelled)
         }
 
     } ,[])
