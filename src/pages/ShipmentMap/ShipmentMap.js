@@ -20,7 +20,7 @@ function ShipmentMap() {
   const [ shipment , setShipment ] = useState({})
   const { isLoaded , google } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: 'apikey'
+    googleMapsApiKey: process.env.REACT_APP_API_KEY
   })
   console.log(process.env.REACT_APP_API_KEY)
   const [map, setMap] = React.useState(null)

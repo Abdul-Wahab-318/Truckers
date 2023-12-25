@@ -21,7 +21,7 @@ function VehicleRoute() {
   const [ waypoints, setWaypoints ] = useState([])
   const { isLoaded , google } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: 'apikey'
+    googleMapsApiKey: process.env.REACT_APP_API_KEY
   })
   const [map, setMap] = React.useState(null)
   const [directionResponse , setDirectionResponse] = useState(null)
@@ -79,7 +79,10 @@ function VehicleRoute() {
 
   //calculate route when google script is properly loaded
   useEffect( () => {
-    calculateRoute( vehicle.from , vehicle.to , waypoints )
+
+    if ( vehicle.from && vehicle.to )
+      calculateRoute( vehicle.from , vehicle.to , waypoints )
+    
   } , [window.google , window.google?.maps , window.google?.maps?.DirectionsService , waypoints])
 
 

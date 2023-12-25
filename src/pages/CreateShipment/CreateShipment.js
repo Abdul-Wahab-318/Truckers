@@ -133,7 +133,7 @@ export default function CreateShipment() {
             <GooglePlacesAutocomplete
             placeholder="Address"
             selectProps={{ address , onChange : setAddress , placeholder : 'Address'  }}
-            apiKey="apikey"
+            apiKey={process.env.REACT_APP_API_KEY}
             />
         </Box>
 

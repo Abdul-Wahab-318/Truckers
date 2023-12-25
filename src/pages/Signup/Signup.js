@@ -94,10 +94,11 @@ export default function Signup() {
     validationSchema: validationSchema,
     onSubmit: (values) => {
 
-      if ( !vehicleAssigned ) return
+      if ( !vehicleAssigned && isDriver ) return
 
       const userType = isDriver ? 'driver' : 'admin'
-      handleSubmit({ ...values , userType , vehicleAssigned })
+      const payload = isDriver ? { ...values , userType , vehicleAssigned } : { ...values , userType }
+      handleSubmit(payload)
       formik.resetForm()
     },
   });

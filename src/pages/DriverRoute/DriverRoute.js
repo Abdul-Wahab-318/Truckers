@@ -24,7 +24,7 @@ function DriverRoute() {
   const [ currentLocation , setCurrentLocation ] = useState(false)
   const { isLoaded , google } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: 'apikey'
+    googleMapsApiKey: process.env.REACT_APP_API_KEY
   })
   const [map, setMap] = React.useState(null)
   const [directionResponse , setDirectionResponse] = useState(null)
@@ -47,6 +47,27 @@ function DriverRoute() {
     setDirectionResponse(results)
 
   }
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      // The user has granted permission to access their location
+      navigator.geolocation.getCurrentPosition(
+          (position) => {
+              const latitude = position.coords.latitude;
+              const longitude = position.coords.longitude;
+              setCurrentLocation({ lat : latitude, lng : longitude });
+              console.log('Current location:', { latitude, longitude });
+          },
+          (error) => {
+              console.error('Error getting location:', error.message);
+          }
+      );
+  } else {
+      // Geolocation is not supported by the browser
+      console.error('Geolocation is not supported by your browser');
+  }
+  },[])
+
 
   useEffect(() => {
     ( async () => {
@@ -82,26 +103,6 @@ function DriverRoute() {
   useEffect( () => {
     calculateRoute( ( currentLocation ? currentLocation : vehicle.from ) , vehicle.to , waypoints )
   } , [window.google , window.google?.maps , window.google?.maps?.DirectionsService , waypoints])
-
-  useEffect(() => {
-    if (navigator.geolocation) {
-      // The user has granted permission to access their location
-      navigator.geolocation.getCurrentPosition(
-          (position) => {
-              const latitude = position.coords.latitude;
-              const longitude = position.coords.longitude;
-              setCurrentLocation({ lat : latitude, lng : longitude });
-              console.log('Current location:', { latitude, longitude });
-          },
-          (error) => {
-              console.error('Error getting location:', error.message);
-          }
-      );
-  } else {
-      // Geolocation is not supported by the browser
-      console.error('Geolocation is not supported by your browser');
-  }
-  },[])
 
 
   return (isLoaded )? (
