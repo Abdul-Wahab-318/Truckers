@@ -4,10 +4,13 @@ import axiosInstance from '../../axiosInstance'
 import pendingIcon from "../../images/delivery.png"
 import deliveredIcon from "../../images/complete.png"
 import routeIcon from "../../images/route.png"
+import {socket} from "../../socket"
 
 export default function Stats() {
 
     const [ stats , setStats ] = useState([])
+    const [ flag , setFlag ] = useState(false)
+
     const images = [ pendingIcon , deliveredIcon , routeIcon ]
     useEffect(() => {
 
@@ -24,6 +27,26 @@ export default function Stats() {
             }
 
         })()
+
+    },[flag])
+
+    const handleShipmentUpdate = () => {
+        setFlag( val => !val )
+    }
+
+    useEffect(() => {
+        try{
+            socket.on("shipment-delivered" , handleShipmentUpdate)
+            socket.on("shipment-cancelled" , handleShipmentUpdate)
+        }catch(error){
+            console.error(error)
+        }
+
+        return () => {
+            socket.off("shipment-delivered" , handleShipmentUpdate)
+            socket.off("shipment-cancelled" , handleShipmentUpdate)
+        }
+        
 
     },[])
     

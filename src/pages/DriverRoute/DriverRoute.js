@@ -21,7 +21,10 @@ function DriverRoute() {
   const vehicleID = store.getState().user.value.vehicleAssigned
   const [ waypoints, setWaypoints ] = useState([])
   const [ vehicle , setVehicle ] = useState({})
+  const [wayPointsloaded , setWayPointsLoaded] = useState(false)
+  const [vehicleLoaded , setVehicleLoaded] = useState(false)
   const [ currentLocation , setCurrentLocation ] = useState(false)
+
   const { isLoaded , google } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.REACT_APP_API_KEY
@@ -48,6 +51,7 @@ function DriverRoute() {
 
   }
 
+  //get current location
   useEffect(() => {
     if (navigator.geolocation) {
       // The user has granted permission to access their location
@@ -63,12 +67,11 @@ function DriverRoute() {
           }
       );
   } else {
-      // Geolocation is not supported by the browser
       console.error('Geolocation is not supported by your browser');
   }
   },[])
 
-
+  //fetch shipments of vehicle
   useEffect(() => {
     ( async () => {
 
@@ -77,19 +80,7 @@ function DriverRoute() {
         const shipments = data.data
         const waypoints = shipments.map(shipment => ( {location : shipment.address , stopover : true } ) )
         setWaypoints(waypoints)
-      }
-      catch(err){
-        console.error(err)
-      }
-
-    })() ;
-
-    ( async () => {
-
-      try{
-        const { data } = await axiosInstance.get("/vehicle/" + vehicleID)
-        const vehicle = data.data
-        setVehicle(vehicle)
+        setWayPointsLoaded(true)
       }
       catch(err){
         console.error(err)
@@ -99,10 +90,30 @@ function DriverRoute() {
 
   },[])
 
+  //fetch vehicle
+  useEffect(() => {
+    ( async () => {
+
+      try{
+        const { data } = await axiosInstance.get("/vehicle/" + vehicleID)
+        const vehicle = data.data
+        setVehicle(vehicle)
+        setVehicleLoaded(true)
+
+      }
+      catch(err){
+        console.error(err)
+      }
+
+    })() ;
+  },[])
+
   //calculate route when google script is properly loaded
   useEffect( () => {
-    calculateRoute( ( currentLocation ? currentLocation : vehicle.from ) , vehicle.to , waypoints )
-  } , [window.google , window.google?.maps , window.google?.maps?.DirectionsService , waypoints])
+    if( vehicleLoaded && wayPointsloaded )
+      calculateRoute( ( currentLocation ? currentLocation : vehicle.from ) , vehicle.to , waypoints )
+  } , 
+  [window.google , window.google?.maps , window.google?.maps?.DirectionsService , vehicleLoaded, wayPointsloaded])
 
 
   return (isLoaded )? (
@@ -113,7 +124,7 @@ function DriverRoute() {
         zoom={12}
         onLoad={map => {setMap(map) } }
       >
-        <Marker position={currentLocation} icon={{ url: pin }}  />
+        <Marker position={currentLocation ? currentLocation : null} icon={{ url: pin }}  />
         {directionResponse && <DirectionsRenderer directions={directionResponse} />}
       </GoogleMap>
     </>
