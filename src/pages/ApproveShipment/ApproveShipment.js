@@ -41,8 +41,8 @@ export default function ApproveShipment() {
             flex : 1
         },
         {
-            field: 'vehicle',
-            headerName: 'Vehicle Assigned',
+            field: 'drone',
+            headerName: 'drone Assigned',
             editable: false,
             flex : 1
         },

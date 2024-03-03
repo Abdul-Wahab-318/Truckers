@@ -34,20 +34,20 @@ const adminlinks = [
     path : '/create-shipment'
   } ,
   {
-    label : 'Create Vehicle' ,
-    path : '/create-vehicle'
+    label : 'Create Drone' ,
+    path : '/create-drone'
   }
   
 ]
 
-const driverlinks = [
+const operatorlinks = [
   {
     label : 'Dashboard' ,
-    path : '/driver'
+    path : '/operator'
   } ,
   {
-    label : 'View Route' ,
-    path : '/driver/driver-route'
+    label : 'View Drone Route' ,
+    path : '/operator/drone-route'
   } ,
 ]
 
@@ -136,7 +136,7 @@ const DrawerItems = ({ toggleDrawer = () => {} }) => {
   const dispatch = useDispatch()
   const { pathname } = useLocation()
   const userType = store.getState().user.value.userType
-  const links = userType === 'admin' ? adminlinks : driverlinks
+  const links = userType === 'admin' ? adminlinks : operatorlinks 
   const activeLinkStyle = {
     bgcolor : 'rgba(0, 0, 0, 0.04)'
   }
@@ -159,7 +159,7 @@ const DrawerItems = ({ toggleDrawer = () => {} }) => {
 
   return (
     <>
-      <h1 style={{'textAlign':'center' , 'marginBlock' : '40px'}}>Truckers</h1>
+      <h1 style={{'textAlign':'center' , 'marginBlock' : '40px'}}>Weboide</h1>
 
       <List sx={{paddingX : '40px'}}>
         {links.map((link, index) => (

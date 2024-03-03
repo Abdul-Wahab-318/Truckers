@@ -14,10 +14,10 @@ const center = {
   lng: 73.025331
 };
 
-function VehicleRoute() {
+function DroneRouteMap() {
 
   const { id } = useParams()
-  const [ vehicle , setVehicle ] = useState({})
+  const [ drone , setdrone ] = useState({})
   const [ waypoints, setWaypoints ] = useState([])
   const { isLoaded , google } = useJsApiLoader({
     id: 'google-map-script',
@@ -49,7 +49,7 @@ function VehicleRoute() {
     ( async () => {
 
       try{
-        const { data } = await axiosInstance.get("/vehicle/shipment-by-vehicle/" + id)
+        const { data } = await axiosInstance.get("/drone/shipment-by-drone/" + id)
         const shipments = data.data
         const waypoints = shipments.map(shipment => ( {location : shipment.address , stopover : true } ) )
         console.log(waypoints)
@@ -64,10 +64,10 @@ function VehicleRoute() {
     ( async () => {
 
       try{
-        const { data } = await axiosInstance.get("/vehicle/" + id)
-        const vehicle = data.data
-        console.log(vehicle)
-        setVehicle(vehicle)
+        const { data } = await axiosInstance.get("/drone/" + id)
+        const drone = data.data
+        console.log(drone)
+        setdrone(drone)
       }
       catch(err){
         console.error(err)
@@ -80,14 +80,14 @@ function VehicleRoute() {
   //calculate route when google script is properly loaded
   useEffect( () => {
 
-    if ( vehicle.from && vehicle.to )
-      calculateRoute( vehicle.from , vehicle.to , waypoints )
+    if ( drone.from && drone.to )
+      calculateRoute( drone.from , drone.to , waypoints )
     
   } , [window.google , window.google?.maps , window.google?.maps?.DirectionsService , waypoints])
 
 
 
-  console.log(vehicle)
+  console.log(drone)
 
 
   return (isLoaded )? (
@@ -105,4 +105,4 @@ function VehicleRoute() {
   ) : <h3 style={{textAlign:'center'}}>Loading Map...</h3>
 }
 
-export default React.memo(VehicleRoute)
+export default DroneRouteMap

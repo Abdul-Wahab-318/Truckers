@@ -35,8 +35,10 @@ export default function Signin() {
         
         if ( payload.userType === "admin" )
           navigate('/')
-        else
-          navigate('/driver')
+        else if ( payload.userType === "operator" )
+          navigate('/operator')
+        else 
+          navigate('manager')
         
       }
       catch(errorMessage)

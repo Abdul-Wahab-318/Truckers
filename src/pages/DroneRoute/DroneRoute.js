@@ -16,13 +16,13 @@ const center = {
   lng: 73.025331
 };
 
-function DriverRoute() {
+function DroneRoute() {
 
-  const vehicleID = store.getState().user.value.vehicleAssigned
+  const droneID = store.getState().user.value.droneAssigned
   const [ waypoints, setWaypoints ] = useState([])
-  const [ vehicle , setVehicle ] = useState({})
+  const [ drone , setdrone ] = useState({})
   const [wayPointsloaded , setWayPointsLoaded] = useState(false)
-  const [vehicleLoaded , setVehicleLoaded] = useState(false)
+  const [droneLoaded , setdroneLoaded] = useState(false)
   const [ currentLocation , setCurrentLocation ] = useState(false)
 
   const { isLoaded , google } = useJsApiLoader({
@@ -71,12 +71,12 @@ function DriverRoute() {
   }
   },[])
 
-  //fetch shipments of vehicle
+  //fetch shipments of drone
   useEffect(() => {
     ( async () => {
 
       try{
-        const { data } = await axiosInstance.get("/vehicle/shipment-by-vehicle/" + vehicleID)
+        const { data } = await axiosInstance.get("/drone/shipment-by-drone/" + droneID)
         const shipments = data.data
         const waypoints = shipments.map(shipment => ( {location : shipment.address , stopover : true } ) )
         setWaypoints(waypoints)
@@ -90,15 +90,15 @@ function DriverRoute() {
 
   },[])
 
-  //fetch vehicle
+  //fetch drone
   useEffect(() => {
     ( async () => {
 
       try{
-        const { data } = await axiosInstance.get("/vehicle/" + vehicleID)
-        const vehicle = data.data
-        setVehicle(vehicle)
-        setVehicleLoaded(true)
+        const { data } = await axiosInstance.get("/drone/" + droneID)
+        const drone = data.data
+        setdrone(drone)
+        setdroneLoaded(true)
 
       }
       catch(err){
@@ -110,10 +110,10 @@ function DriverRoute() {
 
   //calculate route when google script is properly loaded
   useEffect( () => {
-    if( vehicleLoaded && wayPointsloaded )
-      calculateRoute( ( currentLocation ? currentLocation : vehicle.from ) , vehicle.to , waypoints )
+    if( droneLoaded && wayPointsloaded )
+      calculateRoute( ( currentLocation ? currentLocation : drone.from ) , drone.to , waypoints )
   } , 
-  [window.google , window.google?.maps , window.google?.maps?.DirectionsService , vehicleLoaded, wayPointsloaded])
+  [window.google , window.google?.maps , window.google?.maps?.DirectionsService , droneLoaded, wayPointsloaded])
 
 
   return (isLoaded )? (
@@ -131,4 +131,4 @@ function DriverRoute() {
   ) : <h3 style={{textAlign:'center'}}>Loading Map...</h3>
 }
 
-export default React.memo(DriverRoute)
+export default React.memo(DroneRoute)

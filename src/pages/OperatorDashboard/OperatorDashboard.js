@@ -6,11 +6,11 @@ import PageTitle from '../../Components/PageTitle/PageTitle.js'
 import CustomDropdown from '../../Components/CustomDropdown/CustomDropdown.js'
 import CustomDataGrid from '../../Components/CustomDataGrid/CustomDataGrid.js'
 import { useTheme} from '@mui/material'
-import axiosInstance from '../../axiosInstance'
+import axiosInstance from '../../axiosInstance.js'
 import { Link } from 'react-router-dom/dist'
 import store from '../../redux/store/store.js'
 
-export default function DriverDashboard() {
+export default function OperatorDashboard() {
 
   return (
     <Box>
@@ -36,7 +36,7 @@ export default function DriverDashboard() {
 
 const ShipmentGrid = () => {
 
-    const vehicleID = store.getState().user.value.vehicleAssigned
+    const droneID = store.getState().user.value.droneAssigned
     const theme = useTheme()
     const editBtnStyle = {
         fontSize : '14px' , textTransform:'capitalize' , p:'5px 10px' , 
@@ -108,7 +108,7 @@ const ShipmentGrid = () => {
     useEffect(() => {
         ( async () => {
             try{
-                const { data } = await axiosInstance.get("/vehicle/shipment-by-vehicle/" + vehicleID) 
+                const { data } = await axiosInstance.get("/drone/shipment-by-drone/" + droneID) 
                 console.log(data)
                 setShipments( data.data )
             }

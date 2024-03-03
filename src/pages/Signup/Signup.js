@@ -1,4 +1,4 @@
-import  React , { useEffect} from 'react';
+import  React , { useEffect , useState } from 'react';
 import CustomButton from '../../Components/CustomButton/CustomButton';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -21,16 +21,17 @@ import { signup } from '../../api/seller';
 import axiosInstance from '../../axiosInstance';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import { FormControl , Select } from '@mui/material';
+import { FormControl , Select , RadioGroup ,Radio} from '@mui/material';
 
 export default function Signup() {
 
   const nav = useNavigate()
   const dispatch = useDispatch()
+  const [ userType , setUserType ] = useState('admin')
   const [ isLoading , setIsLoading ] = React.useState(false)
-  const [ isDriver , setIsDriver ] = React.useState(false)
-  const [ vehicles , setVehicles ] = React.useState([])
-  const [ vehicleAssigned , setVehicleAssigned ] = React.useState(false)
+  const [ isOperator , setIsOperator ] = React.useState(false)
+  const [ drones , setdrones ] = React.useState([])
+  const [ droneAssigned , setdroneAssigned ] = React.useState(false)
 
   const handleSubmit = async ( body ) => {
 
@@ -42,9 +43,11 @@ export default function Signup() {
       dispatch(login(payload))
       toast.success("Signed Up")
       
-      if ( payload.userType === 'driver')
-        nav("/driver")
-      else
+      if ( payload.userType === 'operator')
+        nav("/operator")
+      else if (  payload.userType === 'manager' )
+        nav("/manager")
+      else 
         nav("/")
       
 
@@ -94,10 +97,10 @@ export default function Signup() {
     validationSchema: validationSchema,
     onSubmit: (values) => {
 
-      if ( !vehicleAssigned && isDriver ) return
+      if ( !droneAssigned && userType === 'operator' ) return
 
-      const userType = isDriver ? 'driver' : 'admin'
-      const payload = isDriver ? { ...values , userType , vehicleAssigned } : { ...values , userType }
+      
+      const payload = userType === 'operator' ? { ...values , userType , droneAssigned } : { ...values , userType }
       handleSubmit(payload)
       formik.resetForm()
     },
@@ -108,8 +111,8 @@ export default function Signup() {
     ( async () => {
 
       try{
-        let {data} = await axiosInstance.get('/vehicle/vehicles/filtered') ;
-        setVehicles(data.data)
+        let {data} = await axiosInstance.get('/drone/drones/filtered') ;
+        setdrones(data.data)
       }
       catch(err)
       {
@@ -201,34 +204,45 @@ export default function Signup() {
                 />
               </Grid>
               {
-                isDriver ? 
+                userType === 'operator' ? 
                 <Grid item xs={12}>
                   <FormControl fullWidth>
-                    <InputLabel id="vehicleLabel">Vehicle Assigned</InputLabel>
+                    <InputLabel id="droneLabel">drone Assigned</InputLabel>
                     <Select
                         fullWidth
-                        labelId="vehicleLabel"
-                        id="vehicle"
-                        value={vehicleAssigned}
-                        label="Vehicle Assigned"
-                        onChange={(e)=>setVehicleAssigned(e.target.value)}
+                        labelId="droneLabel"
+                        id="drone"
+                        value={droneAssigned}
+                        label="drone Assigned"
+                        onChange={(e)=>setdroneAssigned(e.target.value)}
                         
                         >
                           {
-                            vehicles.map( (vehicle , ind) => <MenuItem key={ind} value={vehicle._id}>{vehicle.id}</MenuItem> )
+                            drones.map( (drone , ind) => <MenuItem key={ind} value={drone._id}>{drone.id}</MenuItem> )
                           }
 
                     </Select>
                   </FormControl>
-                  { isDriver && <p style={{'fontSize' : '12px' , color: 'red' , padding : '10px' , margin : 0}}>Select Vehicle</p>}
+                  { userType === 'operator' && <p style={{'fontSize' : '12px' , color: 'red' , padding : '10px' , margin : 0}}>Select drone</p>}
                 </Grid>
                 :
                 <></>
               }
             </Grid>
 
-            <FormGroup>
-              <FormControlLabel control={<Checkbox onChange={(e) => setIsDriver(e.target.checked)} />} label="Sign up as Driver" />
+            <FormGroup >
+              <RadioGroup
+                aria-labelledby="demo-radio-buttons-group-label"
+                defaultValue="female"
+                name="radio-buttons-group"
+              >
+                <FormControlLabel 
+                value={'operator'}
+                control={<Radio onChange={(e) => { if ( e.target.checked) setUserType('operator')  }}  />} label="Sign up as Operator" />
+                <FormControlLabel 
+                value={'manager'}
+                control={<Radio onChange={(e) => { if ( e.target.checked) setUserType('manager')  }} />} label="Sign up as Manager" />
+              </RadioGroup>
             </FormGroup>
 
             <CustomButton
