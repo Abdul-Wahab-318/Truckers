@@ -14,11 +14,11 @@ import RouteProtection from "./Components/RouteProtection/RouteProtection";
 import CreateShipment from "./pages/CreateShipment/CreateShipment";
 import ApproveShipment from "./pages/ApproveShipment/ApproveShipment";
 import ShipmentMap from "./pages/ShipmentMap/ShipmentMap";
-import CreateDrone from "./pages/CreateDrone/CreateDrone";
-import DroneRouteMap from "./pages/DroneRouteMap/DroneRouteMap";
+import CreateVehicle from "./pages/CreateVehicle/CreateVehicle";
+import VehicleRoute from "./pages/VehicleRoute/VehicleRoute";
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
-import OperatorDashboard from "./pages/OperatorDashboard/OperatorDashboard";
-import DroneRoute from "./pages/DroneRoute/DroneRoute";
+import DriverDashboard from "./pages/DriverDashboard/DriverDashboard";
+import DriverRoute from "./pages/DriverRoute/DriverRoute";
 import { socket } from "./socket";
 
 const theme = createTheme({
@@ -58,15 +58,15 @@ function App() {
               <Route exact path="create-shipment" element={<CreateShipment/>} />
               <Route exact path="approve-shipment" element={<ApproveShipment/>} />
               <Route exact path="Shipment-map/:id" element={<ShipmentMap/>} />
-              <Route exact path="create-drone" element={<CreateDrone/>} />
-              <Route exact path="drone-route/:id" element={<DroneRouteMap/>} />
+              <Route exact path="create-vehicle" element={<CreateVehicle/>} />
+              <Route exact path="vehicle-route/:id" element={<VehicleRoute/>} />
             </Route>
           </Route>
 
-          <Route path="/operator" element={ <UserDashboardLayout/> }>
+          <Route path="/driver" element={ <UserDashboardLayout/> }>
             <Route element={<RouteProtection/>} >
-                <Route index element={ <OperatorDashboard/> } />
-                <Route exact path="drone-route" element={<DroneRoute/>} />
+                <Route index element={ <DriverDashboard/> } />
+                <Route exact path="driver-route" element={<DriverRoute/>} />
             </Route>
           </Route>
 

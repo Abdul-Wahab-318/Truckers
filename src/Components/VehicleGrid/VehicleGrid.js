@@ -1,10 +1,10 @@
 import React , { useEffect , useState } from 'react'
-import CustomDataGrid from '../CustomDataGrid/CustomDataGrid'
+import CustomDataGrid from '../../Components/CustomDataGrid/CustomDataGrid'
 import { Button, Switch , Stack, useTheme} from '@mui/material'
 import axiosInstance from '../../axiosInstance'
 import { Link } from 'react-router-dom/dist'
 
-export default function DroneGrid() {
+export default function VehicleGrid() {
     
     const theme = useTheme()
     const editBtnStyle = {
@@ -21,12 +21,12 @@ export default function DroneGrid() {
             
     }
 
-    const [ drones , setdrones ] = useState([])
+    const [ vehicles , setVehicles ] = useState([])
 
     const columns = [
         {
             field: 'id',
-            headerName: 'drone id',
+            headerName: 'Vehicle id',
             valueGetter : ( params ) => {
                 return params.row.id
             } , 
@@ -52,7 +52,7 @@ export default function DroneGrid() {
             editable: true,
             renderCell : (params) => {
                 return (
-                    <Link to={'/drone-route/' + params.row._id}
+                    <Link to={'/vehicle-route/' + params.row._id}
                      sx={{...editBtnStyle}}>
                         View
                     </Link>
@@ -66,8 +66,8 @@ export default function DroneGrid() {
     useEffect(() => {
         ( async () => {
             try{
-                const { data } = await axiosInstance.get("/drone/drones") 
-                setdrones( data.data )
+                const { data } = await axiosInstance.get("/vehicle/vehicles") 
+                setVehicles( data.data )
             }
             catch(err)
             {
@@ -77,10 +77,10 @@ export default function DroneGrid() {
     } , [])
 
 
-    if ( drones.length === 0 )
-        return <h4 style={{'textAlign':'center' , 'margin':0}}>No drones</h4>
+    if ( vehicles.length === 0 )
+        return <h4 style={{'textAlign':'center' , 'margin':0}}>No vehicles</h4>
 
   return (
-    <CustomDataGrid columns={columns} rows={drones} style={gridStyle} />
+    <CustomDataGrid columns={columns} rows={vehicles} style={gridStyle} />
   )
 }

@@ -7,7 +7,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import axiosInstance from '../../axiosInstance';
 
-export default function CreateDrone() {
+export default function CreateVehicle() {
 
     let [ from , setFrom ] = useState('')
     let [ to , setTo ] = useState('')
@@ -31,6 +31,7 @@ export default function CreateDrone() {
         setFrom('')
         setId('')
         setTo('')
+        setMaxCapacity('')
     }
 
 
@@ -39,10 +40,10 @@ export default function CreateDrone() {
         if ( !validate() )
         return 
 
-        const payload = { from , to , id }
+        const payload = { from , to , maxCapacity , id }
         
         try{
-            const { data } = await axiosInstance.post("/drone/create" , payload)
+            const { data } = await axiosInstance.post("/vehicle/create" , payload)
             clearForm()
         }   
         catch( err )
@@ -59,10 +60,10 @@ export default function CreateDrone() {
   return (
 
     <CustomBox sx={{maxWidth : '800px' , marginX : 'auto'}}>
-        <PageTitle>Create A New Drone</PageTitle>
+        <PageTitle>Create A New Vehicle</PageTitle>
 
         <FormControl fullWidth sx={{'mt':5}}>
-            <TextField label="drone ID" type='text' value={id} placeholder='drone ID' onChange={(e)=> setId(e.target.value)} />
+            <TextField label="Vehicle ID" type='text' value={id} placeholder='Vehicle ID' onChange={(e)=> setId(e.target.value)} />
         </FormControl>
 
         <FormControl fullWidth sx={{marginTop:5}}>

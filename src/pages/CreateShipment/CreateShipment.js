@@ -14,8 +14,8 @@ export default function CreateShipment() {
     let [ to , setTo ] = useState('')
     let [ address , setAddress ] = useState('')
     let [ weight , setWeight ] = useState('')
-    let [ drone , setDrone ] = useState('')
-    let [ drones , setDrones ] = useState([
+    let [ vehicle , setVehicle ] = useState('')
+    let [ vehicles , setVehicles ] = useState([
         {
             id : 'V-002' ,
             name : 'V-002' ,
@@ -48,7 +48,7 @@ export default function CreateShipment() {
         setAddress('')
         setTo('')
         setWeight('')
-        setDrone('')
+        setVehicle('')
     }
 
 
@@ -57,7 +57,7 @@ export default function CreateShipment() {
         if ( !validate() )
         return 
 
-        const payload = { from , to , weight , drone , address : address.label }
+        const payload = { from , to , weight , vehicle , address : address.label }
         
         try{
             const { data } = await axiosInstance.post("/shipment/create" , payload)
@@ -77,8 +77,8 @@ export default function CreateShipment() {
     useEffect(() => {
         ( async () => {
             try{
-                let { data } = await axiosInstance.get('/drone/drones/filtered')
-                setDrones(data.data)
+                let { data } = await axiosInstance.get('/vehicle/vehicles/filtered')
+                setVehicles(data.data)
                 console.log(data.data)
             }
             catch(err)
@@ -105,7 +105,7 @@ export default function CreateShipment() {
                 
                 >
                     {
-                        drones.map( (drone , ind) => <MenuItem key={ind} value={drone.from}>{drone.from}</MenuItem> )
+                        vehicles.map( (vehicle , ind) => <MenuItem key={ind} value={vehicle.from}>{vehicle.from}</MenuItem> )
                     }
 
             </Select>
@@ -123,7 +123,7 @@ export default function CreateShipment() {
             
             >
                 {
-                    drones.map( (drone , ind) => <MenuItem key={ind} value={drone.to}>{drone.to}</MenuItem> )
+                    vehicles.map( (vehicle , ind) => <MenuItem key={ind} value={vehicle.to}>{vehicle.to}</MenuItem> )
                 }
             </Select>
         </FormControl>
@@ -141,32 +141,32 @@ export default function CreateShipment() {
             {
                 (from === '' || to === '') ? 
                 <>
-                    <InputLabel id="drone">Drone</InputLabel>
+                    <InputLabel id="vehicle">Vehicle</InputLabel>
                     <Select
                     disabled
                     fullWidth
-                    labelId="drone"
-                    id="drone"
-                    value={drone}
-                    label="drone"
+                    labelId="vehicle"
+                    id="vehicle"
+                    value={vehicle}
+                    label="vehicle"
 
                     >
                     </Select>
                 </>
                 :
                 <>
-                    <InputLabel id="drone">Drone</InputLabel>
+                    <InputLabel id="vehicle">Vehicle</InputLabel>
                     <Select
                     fullWidth
-                    labelId="drone"
-                    id="drone"
-                    value={drone}
-                    label="drone"
-                    onChange={(e)=>handleSelectChange(setDrone , e.target.value)}
+                    labelId="vehicle"
+                    id="vehicle"
+                    value={vehicle}
+                    label="vehicle"
+                    onChange={(e)=>handleSelectChange(setVehicle , e.target.value)}
 
                     >
                         {
-                            drones.filter( v => ( v.from == from && v.to === to )).map( v =>  <MenuItem key={v._id} value={v._id}> {v.id} </MenuItem>)    
+                            vehicles.filter( v => ( v.from == from && v.to === to )).map( v =>  <MenuItem key={v._id} value={v._id}> {v.id} </MenuItem>)    
                         }
                     </Select>
                 </>

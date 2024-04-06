@@ -2,8 +2,6 @@ import React , {useEffect, useRef, useState} from 'react'
 import { GoogleMap, useJsApiLoader , Marker , DirectionsRenderer } from '@react-google-maps/api';
 import { useParams } from 'react-router-dom';
 import axiosInstance from '../../axiosInstance';
-import store from '../../redux/store/store';
-import pin from '../../images/pin.png';
 
 const containerStyle = {
   width: '100%',
@@ -16,12 +14,11 @@ const center = {
   lng: 73.025331
 };
 
-function DroneRoute() {
+function VehicleRoute() {
 
-  const droneID = store.getState().user.value.droneAssigned
-  const [ waypoints, setWaypoints ] = useState([])
+  const { id } = useParams()
   const [ vehicle , setVehicle ] = useState({})
-  const [ currentLocation , setCurrentLocation ] = useState(false)
+  const [ waypoints, setWaypoints ] = useState([])
   const { isLoaded , google } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.REACT_APP_API_KEY
@@ -49,33 +46,13 @@ function DroneRoute() {
   }
 
   useEffect(() => {
-    if (navigator.geolocation) {
-      // The user has granted permission to access their location
-      navigator.geolocation.getCurrentPosition(
-          (position) => {
-              const latitude = position.coords.latitude;
-              const longitude = position.coords.longitude;
-              setCurrentLocation({ lat : latitude, lng : longitude });
-              console.log('Current location:', { latitude, longitude });
-          },
-          (error) => {
-              console.error('Error getting location:', error.message);
-          }
-      );
-  } else {
-      // Geolocation is not supported by the browser
-      console.error('Geolocation is not supported by your browser');
-  }
-  },[])
-
-
-  useEffect(() => {
     ( async () => {
 
       try{
-        const { data } = await axiosInstance.get("/drone/shipment-by-drone/" + droneID)
+        const { data } = await axiosInstance.get("/vehicle/shipment-by-vehicle/" + id)
         const shipments = data.data
         const waypoints = shipments.map(shipment => ( {location : shipment.address , stopover : true } ) )
+        console.log(waypoints)
         setWaypoints(waypoints)
       }
       catch(err){
@@ -87,8 +64,9 @@ function DroneRoute() {
     ( async () => {
 
       try{
-        const { data } = await axiosInstance.get("/vehicle/" + vehicleID)
+        const { data } = await axiosInstance.get("/vehicle/" + id)
         const vehicle = data.data
+        console.log(vehicle)
         setVehicle(vehicle)
       }
       catch(err){
@@ -101,8 +79,15 @@ function DroneRoute() {
 
   //calculate route when google script is properly loaded
   useEffect( () => {
-    calculateRoute( ( currentLocation ? currentLocation : vehicle.from ) , vehicle.to , waypoints )
+
+    if ( vehicle.from && vehicle.to )
+      calculateRoute( vehicle.from , vehicle.to , waypoints )
+    
   } , [window.google , window.google?.maps , window.google?.maps?.DirectionsService , waypoints])
+
+
+
+  console.log(vehicle)
 
 
   return (isLoaded )? (
@@ -113,11 +98,11 @@ function DroneRoute() {
         zoom={12}
         onLoad={map => {setMap(map) } }
       >
-        <Marker position={currentLocation} icon={{ url: pin }}  />
+        <Marker position={center} />
         {directionResponse && <DirectionsRenderer directions={directionResponse} />}
       </GoogleMap>
     </>
   ) : <h3 style={{textAlign:'center'}}>Loading Map...</h3>
 }
 
-export default React.memo(DroneRoute)
+export default React.memo(VehicleRoute)
