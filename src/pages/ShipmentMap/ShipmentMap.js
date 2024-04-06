@@ -22,6 +22,7 @@ function ShipmentMap() {
     id: 'google-map-script',
     googleMapsApiKey: process.env.REACT_APP_API_KEY
   })
+  console.log(process.env.REACT_APP_API_KEY)
   const [map, setMap] = React.useState(null)
   const [directionResponse , setDirectionResponse] = useState(null)
 
@@ -31,7 +32,7 @@ function ShipmentMap() {
       console.error('google not loaded')
       return;
     }
-    console.log(from , to )
+
     const directionService = new window.google.maps.DirectionsService()
     const results = await directionService.route({
       origin : from ,

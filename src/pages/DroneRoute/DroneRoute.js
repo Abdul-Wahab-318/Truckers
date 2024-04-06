@@ -20,11 +20,8 @@ function DroneRoute() {
 
   const droneID = store.getState().user.value.droneAssigned
   const [ waypoints, setWaypoints ] = useState([])
-  const [ drone , setdrone ] = useState({})
-  const [wayPointsloaded , setWayPointsLoaded] = useState(false)
-  const [droneLoaded , setdroneLoaded] = useState(false)
+  const [ vehicle , setVehicle ] = useState({})
   const [ currentLocation , setCurrentLocation ] = useState(false)
-
   const { isLoaded , google } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.REACT_APP_API_KEY
@@ -51,7 +48,6 @@ function DroneRoute() {
 
   }
 
-  //get current location
   useEffect(() => {
     if (navigator.geolocation) {
       // The user has granted permission to access their location
@@ -67,11 +63,12 @@ function DroneRoute() {
           }
       );
   } else {
+      // Geolocation is not supported by the browser
       console.error('Geolocation is not supported by your browser');
   }
   },[])
 
-  //fetch shipments of drone
+
   useEffect(() => {
     ( async () => {
 
@@ -80,7 +77,6 @@ function DroneRoute() {
         const shipments = data.data
         const waypoints = shipments.map(shipment => ( {location : shipment.address , stopover : true } ) )
         setWaypoints(waypoints)
-        setWayPointsLoaded(true)
       }
       catch(err){
         console.error(err)
@@ -88,32 +84,25 @@ function DroneRoute() {
 
     })() ;
 
-  },[])
-
-  //fetch drone
-  useEffect(() => {
     ( async () => {
 
       try{
-        const { data } = await axiosInstance.get("/drone/" + droneID)
-        const drone = data.data
-        setdrone(drone)
-        setdroneLoaded(true)
-
+        const { data } = await axiosInstance.get("/vehicle/" + vehicleID)
+        const vehicle = data.data
+        setVehicle(vehicle)
       }
       catch(err){
         console.error(err)
       }
 
     })() ;
+
   },[])
 
   //calculate route when google script is properly loaded
   useEffect( () => {
-    if( droneLoaded && wayPointsloaded )
-      calculateRoute( ( currentLocation ? currentLocation : drone.from ) , drone.to , waypoints )
-  } , 
-  [window.google , window.google?.maps , window.google?.maps?.DirectionsService , droneLoaded, wayPointsloaded])
+    calculateRoute( ( currentLocation ? currentLocation : vehicle.from ) , vehicle.to , waypoints )
+  } , [window.google , window.google?.maps , window.google?.maps?.DirectionsService , waypoints])
 
 
   return (isLoaded )? (
@@ -124,7 +113,7 @@ function DroneRoute() {
         zoom={12}
         onLoad={map => {setMap(map) } }
       >
-        <Marker position={currentLocation ? currentLocation : null} icon={{ url: pin }}  />
+        <Marker position={currentLocation} icon={{ url: pin }}  />
         {directionResponse && <DirectionsRenderer directions={directionResponse} />}
       </GoogleMap>
     </>
