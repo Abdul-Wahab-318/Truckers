@@ -5,7 +5,8 @@ import axiosInstance from '../../axiosInstance'
 import { Link } from 'react-router-dom/dist'
 import { socket } from '../../socket'
 import { ToastContainer , toast } from 'react-toastify'
-
+import {FormControl , InputLabel , Select , MenuItem} from '@mui/material'
+import PageTitle from '../PageTitle/PageTitle'
 export default function ShipmentGrid() {
     
     const theme = useTheme()
@@ -23,6 +24,7 @@ export default function ShipmentGrid() {
             
     }
 
+    const [ filter , setFilter ] = useState("pending")
     const [ shipments , setShipments ] = useState([])
 
     const columns = [
@@ -137,9 +139,33 @@ export default function ShipmentGrid() {
     if ( shipments.length === 0 )
         return <h4 style={{'textAlign':'center' , 'margin':0}}>No Shipments</h4>
 
+    const handleChange = (e) => {
+        setFilter(e.target.value)
+    }
+
   return (
     <>
-        <CustomDataGrid columns={columns} rows={shipments} style={gridStyle} />
+        <div className='d-flex align-items-center gap-4 justify-content-between'>
+            <PageTitle >Shipments</PageTitle>
+            <div style={{justifyItems : 'self-end'}}>
+                <FormControl fullWidth>
+                <InputLabel id="filter-label">Filter</InputLabel>
+                <Select
+                    labelId="filter-label"
+                    id="demo-simple-select"
+                    value={filter}
+                    label="Filter"
+                    onChange={handleChange}
+                    sx={{width : '120px'}}
+                >
+                    <MenuItem value={"pending"}>pending</MenuItem>
+                    <MenuItem value={"delivered"}>delivered</MenuItem>
+                    <MenuItem value={"cancelled"}>cancelled</MenuItem>
+                </Select>
+                </FormControl>
+            </div>
+        </div>
+        <CustomDataGrid columns={columns} rows={shipments.filter( shipment => shipment.status === filter )} style={gridStyle} />
         <ToastContainer/>
     </>
   )

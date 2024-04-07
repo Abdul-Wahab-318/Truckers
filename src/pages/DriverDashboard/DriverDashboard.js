@@ -19,11 +19,10 @@ export default function DriverDashboard() {
             </PageTitle>
             <Box sx={{display:'flex' , gap : 3 , mt : { xs : 2 , sm : 0 } }}>
                 <CustomButton variant="outlined"> SEK 20000 </CustomButton>
-                <CustomDropdown title={'Profile'} />
             </Box>
         </Stack>
         <Grid container sx={{mt:0}} spacing={4}>
-            <Grid item md={12} sx={{display:'flex',gap:4,flexDirection:'column'}}>
+            <Grid item xs={12} sx={{display:'flex',gap:4,flexDirection:'column'}}>
                 <CustomBox>
                     <ShipmentGrid/>
                 </CustomBox>

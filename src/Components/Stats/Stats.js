@@ -7,7 +7,20 @@ import routeIcon from "../../images/route.png"
 
 export default function Stats() {
 
-    const [ stats , setStats ] = useState([])
+    const [ stats , setStats ] = useState([
+        {
+            label : 'Pending Shipments' , 
+            data : 0 
+        } ,
+        {
+            label : 'Delivered Shipments' ,
+            data : 0
+        } ,
+        {
+            label : 'Most Popular Route' ,
+            data : "None"
+        }
+    ])
     const images = [ pendingIcon , deliveredIcon , routeIcon ]
     useEffect(() => {
 

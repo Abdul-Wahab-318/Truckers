@@ -19,24 +19,13 @@ export default function SellerDashboard() {
                 <CustomButton variant="outlined"> SEK 20000 </CustomButton>
             </Box>
         </Stack>
-        <Grid container sx={{mt:0}} spacing={4}>
-            <Grid item md={12} sx={{display:'flex',gap:4,flexDirection:'column'}}>
+        <Grid container sx={{mt:0}} width={'100%'} spacing={4}>
+            <Grid item xs={12} sx={{display:'flex',gap:4,flexDirection:'column'}}>
                 <CustomBox>
                     <Stats />
                 </CustomBox>
-                <PageTitle >
-                    Shipments
-                </PageTitle>
-                <CustomBox>
-                    <ShipmentGrid/>
-                </CustomBox>
-                <PageTitle >
-                    Vehicles
-                </PageTitle>
-                <CustomBox>
-                    <VehicleGrid/>
-                </CustomBox>
-
+                <ShipmentGrid/>
+                <VehicleGrid/>
             </Grid>
         </Grid>
     </Box>

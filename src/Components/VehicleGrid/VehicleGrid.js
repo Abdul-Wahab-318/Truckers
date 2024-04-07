@@ -3,7 +3,7 @@ import CustomDataGrid from '../../Components/CustomDataGrid/CustomDataGrid'
 import { Button, Switch , Stack, useTheme} from '@mui/material'
 import axiosInstance from '../../axiosInstance'
 import { Link } from 'react-router-dom/dist'
-
+import PageTitle from '../PageTitle/PageTitle'
 export default function VehicleGrid() {
     
     const theme = useTheme()
@@ -81,6 +81,9 @@ export default function VehicleGrid() {
         return <h4 style={{'textAlign':'center' , 'margin':0}}>No vehicles</h4>
 
   return (
-    <CustomDataGrid columns={columns} rows={vehicles} style={gridStyle} />
+    <>
+        <PageTitle >Vehicles </PageTitle>
+        <CustomDataGrid columns={columns} rows={vehicles} style={gridStyle} />
+    </>
   )
 }

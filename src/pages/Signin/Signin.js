@@ -121,22 +121,6 @@ export default function Signin() {
                     helperText={formik.touched.password && formik.errors.password}
                   />
                 </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    required
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type="password"
-                    id="password"
-                    autoComplete="new-password"
-                    value={formik.values.password}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    error={formik.touched.password && Boolean(formik.errors.password)}
-                    helperText={formik.touched.password && formik.errors.password}
-                  />
-                </Grid>
               </Grid>
               <CustomButton
                 type="submit"

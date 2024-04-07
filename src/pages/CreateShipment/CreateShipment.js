@@ -46,6 +46,7 @@ export default function CreateShipment() {
 
     const clearForm = () => {
         setFrom('')
+        setRoute('')
         setAddress('')
         setTo('')
         setVehicle('')

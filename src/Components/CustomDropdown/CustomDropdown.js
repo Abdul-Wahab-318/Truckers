@@ -15,11 +15,12 @@ list : [
     }
 ]
 */
-export default function CustomDropdown({ title = "Dashboard" , list = [{ label : 'placeholder' , value : 'placeholder' }] }) {
+export default function CustomDropdown({ title = "None" , list = [{ label : 'placeholder' , value : 'placeholder' }] , handleClick }) {
 
     const createHandleMenuClick = (menuItem) => {
         return () => {
           console.log(`Clicked on ${menuItem}`);
+          handleClick(menuItem)
         };
       };
     
