@@ -7,13 +7,14 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import axiosInstance from '../../axiosInstance';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
-
+import { ToastContainer , toast } from 'react-toastify'
 export default function CreateShipment() {
 
+    let [route , setRoute] = useState("")
+    let [uniqueRoutes , setUniqueRoutes] = useState([])
     let [ from , setFrom ] = useState('')
     let [ to , setTo ] = useState('')
     let [ address , setAddress ] = useState('')
-    let [ weight , setWeight ] = useState('')
     let [ vehicle , setVehicle ] = useState('')
     let [ vehicles , setVehicles ] = useState([
         {
@@ -33,7 +34,7 @@ export default function CreateShipment() {
 
 
     const validate = () => {
-        if ( from === '' || to === '' || weight === '' || address === '' )
+        if ( from === '' || to === '' || address === '' )
         {
             setError("Invalid input")
             return false 
@@ -47,7 +48,6 @@ export default function CreateShipment() {
         setFrom('')
         setAddress('')
         setTo('')
-        setWeight('')
         setVehicle('')
     }
 
@@ -57,11 +57,12 @@ export default function CreateShipment() {
         if ( !validate() )
         return 
 
-        const payload = { from , to , weight , vehicle , address : address.label }
+        const payload = { from , to , vehicle , address : address.label }
         
         try{
             const { data } = await axiosInstance.post("/shipment/create" , payload)
             clearForm()
+            toast.success("Shipment created successfully")
         }   
         catch( err )
         {
@@ -74,12 +75,26 @@ export default function CreateShipment() {
         handler(state)
     }
 
+    const handleRouteSelectChange = ( state ) => {
+
+        const [ from , to ] = state.split("-")
+
+        setFrom(from)
+        setTo(to)
+        setRoute(from+"-"+to)
+        
+        const vehicle = vehicles.find( v => v.from === from && v.to === to)
+        setVehicle(vehicle._id)
+    } 
+
     useEffect(() => {
         ( async () => {
             try{
                 let { data } = await axiosInstance.get('/vehicle/vehicles/filtered')
                 setVehicles(data.data)
-                console.log(data.data)
+
+                const routes = [ ...new Set(data.data.map( vehicle => vehicle.from + "-" + vehicle.to ))] // generate unique routes
+                setUniqueRoutes(routes)
             }
             catch(err)
             {
@@ -94,41 +109,32 @@ export default function CreateShipment() {
         <PageTitle>Create A New Shipment</PageTitle>
 
         <FormControl fullWidth sx={{marginTop:5}}>
-            <InputLabel id="fromLabel">From</InputLabel>
+            <InputLabel id="fromLabel">Route</InputLabel>
             <Select
                 fullWidth
-                labelId="fromLabel"
-                id="from"
-                value={from}
+                labelId="routeLabel"
+                id="route"
+                value={route}
                 label="From"
-                onChange={(e)=>handleSelectChange( setFrom , e.target.value)}
-                
+                onChange={(e)=>{
+                    handleRouteSelectChange(e.target.value)
+                }}
                 >
                     {
-                        vehicles.map( (vehicle , ind) => <MenuItem key={ind} value={vehicle.from}>{vehicle.from}</MenuItem> )
+                        uniqueRoutes.map( (route, ind) => <MenuItem key={ind} value={route}>{route}</MenuItem> )
                     }
 
             </Select>
         </FormControl>
+        {
+            uniqueRoutes.length === 0 ?
+            <span style={{fontSize:'12px' , paddingTop : '10px'}}> (Create atleast one vehicle first)</span>
+            :
+            <></>
+        }
 
-        <FormControl fullWidth sx={{marginTop:5}}>
-            <InputLabel id="to">To</InputLabel>
-            <Select
-            fullWidth
-            labelId="to"
-            id="to"
-            value={to}
-            label="to"
-            onChange={(e)=>handleSelectChange(setTo , e.target.value)}
-            
-            >
-                {
-                    vehicles.map( (vehicle , ind) => <MenuItem key={ind} value={vehicle.to}>{vehicle.to}</MenuItem> )
-                }
-            </Select>
-        </FormControl>
 
-        <Box style={{'position' : 'relative' , zIndex : '10' , marginTop : 25}} className="pt-4">
+        <Box style={{'position' : 'relative' , zIndex : '10' , marginTop : 20}} className="pt-4">
             <GooglePlacesAutocomplete
             placeholder="Address"
             selectProps={{ address , onChange : setAddress , placeholder : 'Address'  }}
@@ -172,15 +178,15 @@ export default function CreateShipment() {
                 </>
 
             }
-            <span style={{fontSize:'12px' , paddingTop : '10px'}}> (select source and destination first)</span>
+            <span style={{fontSize:'12px' , paddingTop : '10px'}}> (select route first)</span>
         </FormControl>
 
 
-        <FormControl fullWidth sx={{'mt':5}}>
-            <TextField label="Weight (kgs)" type='number' value={weight} placeholder='weight (kgs)' onChange={(e)=> setWeight(e.target.value)} />
+        <FormControl fullWidth>
             <p style={{'color':'red' , 'padding':'20px' , 'margin' : 'auto'}}>{error }</p>
             <CustomButton  onClick={()=>handleSubmit()}>Submit</CustomButton>
         </FormControl>
+        <ToastContainer/>
 
     </CustomBox>
   )

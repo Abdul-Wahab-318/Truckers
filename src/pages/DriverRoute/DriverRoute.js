@@ -1,8 +1,7 @@
 import React , {useEffect, useRef, useState} from 'react'
 import { GoogleMap, useJsApiLoader , Marker , DirectionsRenderer } from '@react-google-maps/api';
-import { useParams } from 'react-router-dom';
 import axiosInstance from '../../axiosInstance';
-import store from '../../redux/store/store';
+import {store} from '../../redux/store/store';
 import pin from '../../images/pin.png';
 
 const containerStyle = {
@@ -18,18 +17,19 @@ const center = {
 
 function DriverRoute() {
 
-  const vehicleID = store.getState().user.value.vehicleAssigned
+  const vehicleID = store.getState().persistedReducer.value.vehicleAssigned
   const [ waypoints, setWaypoints ] = useState([])
   const [ vehicle , setVehicle ] = useState({})
   const [wayPointsloaded , setWayPointsLoaded] = useState(false)
   const [vehicleLoaded , setVehicleLoaded] = useState(false)
   const [ currentLocation , setCurrentLocation ] = useState(false)
+  const [map, setMap] = React.useState(null)
+  const [directionResponse , setDirectionResponse] = useState(null)
+
   const { isLoaded , google } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.REACT_APP_API_KEY
   })
-  const [map, setMap] = React.useState(null)
-  const [directionResponse , setDirectionResponse] = useState(null)
 
   const calculateRoute = async ( from , to , waypoints ) => {
 
@@ -57,6 +57,7 @@ function DriverRoute() {
           (position) => {
               const latitude = position.coords.latitude;
               const longitude = position.coords.longitude;
+
               setCurrentLocation({ lat : latitude, lng : longitude });
               console.log('Current location:', { latitude, longitude });
           },
@@ -70,34 +71,24 @@ function DriverRoute() {
   }
   },[])
 
-  //fetch shipments of vehicle
+  //fetch shipments of vehicle and the vehicle
   useEffect(() => {
     ( async () => {
 
       try{
-        const { data } = await axiosInstance.get("/vehicle/shipment-by-vehicle/" + vehicleID)
-        const shipments = data.data
+
+        const { data : shipmentData } = await axiosInstance.get("/vehicle/shipment-by-vehicle/" + vehicleID)
+        const shipments = shipmentData.data
+
+        const { data : vehicleData } = await axiosInstance.get("/vehicle/" + vehicleID)
+        const vehicle = vehicleData.data
+
+
         const waypoints = shipments.map(shipment => ( {location : shipment.address , stopover : true } ) )
         setWaypoints(waypoints)
-      }
-      catch(err){
-        console.error(err)
-      }
-
-    })() ;
-
-  },[])
-
-  //fetch vehicle
-  useEffect(() => {
-    ( async () => {
-
-      try{
-        const { data } = await axiosInstance.get("/vehicle/" + vehicleID)
-        const vehicle = data.data
+        setWayPointsLoaded(true)
         setVehicle(vehicle)
         setVehicleLoaded(true)
-
       }
       catch(err){
         console.error(err)
@@ -105,7 +96,8 @@ function DriverRoute() {
 
     })() ;
 
-  },[])
+  },[currentLocation])
+
 
   //calculate route when google script is properly loaded
   useEffect( () => {

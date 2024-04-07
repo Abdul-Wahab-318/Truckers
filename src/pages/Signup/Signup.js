@@ -86,10 +86,10 @@ export default function Signup() {
 
   const formik = useFormik({
     initialValues: {
-      email: 'wahabmaliq@gmail.com',
-      password: 'Password123$',
-      password_confirmation : 'Password123$' ,
-      name : 'abdulwahab'
+      email: '',
+      password: '',
+      password_confirmation : '' ,
+      name : ''
     },
     validationSchema: validationSchema,
     onSubmit: (values) => {

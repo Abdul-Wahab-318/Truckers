@@ -6,18 +6,18 @@ import PageTitle from '../../Components/PageTitle/PageTitle'
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import axiosInstance from '../../axiosInstance';
+import { ToastContainer , toast } from 'react-toastify'
 
 export default function CreateVehicle() {
 
     let [ from , setFrom ] = useState('')
     let [ to , setTo ] = useState('')
     let [ id , setId ] = useState('')
-    let [ maxCapacity , setMaxCapacity ] = useState('')
     let [ error , setError ] = useState('')
 
 
     const validate = () => {
-        if ( from === '' || to === '' || maxCapacity === '' || id === '' )
+        if ( from === '' || to === ''|| id === '' )
         {
             setError("Invalid input")
             return false 
@@ -31,7 +31,6 @@ export default function CreateVehicle() {
         setFrom('')
         setId('')
         setTo('')
-        setMaxCapacity('')
     }
 
 
@@ -40,11 +39,12 @@ export default function CreateVehicle() {
         if ( !validate() )
         return 
 
-        const payload = { from , to , maxCapacity , id }
+        const payload = { from , to , id }
         
         try{
             const { data } = await axiosInstance.post("/vehicle/create" , payload)
             clearForm()
+            toast.success("Vehicle created successfully")
         }   
         catch( err )
         {
@@ -104,10 +104,10 @@ export default function CreateVehicle() {
 
 
         <FormControl fullWidth sx={{'mt':5}}>
-            <TextField label="Max Capacity (kgs)" type='number' value={maxCapacity} placeholder='Max Capacity (kgs)' onChange={(e)=> setMaxCapacity(e.target.value)} />
             <p style={{'color':'red' , 'padding':'20px' , 'margin' : 'auto'}}>{error }</p>
             <CustomButton  onClick={()=>handleSubmit()}>Submit</CustomButton>
         </FormControl>
+        <ToastContainer/>
 
     </CustomBox>
   )

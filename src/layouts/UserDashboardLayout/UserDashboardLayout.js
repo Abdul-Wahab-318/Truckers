@@ -19,7 +19,7 @@ import { AppBar } from '@mui/material';
 import { logout } from '../../api/seller';
 import { logout as logoutRedux } from '../../redux/slices/userSlice';
 import { useDispatch } from 'react-redux';
-import store from '../../redux/store/store';
+import {store} from '../../redux/store/store';
 import { socket } from '../../socket';
 import { useEffect } from 'react';
 
@@ -55,7 +55,7 @@ const driverlinks = [
 
 export default function UserDashboardLayout() {
   
-  const user = store.getState().user.value
+  const user = store.getState().persistedReducer.value
   const addAdminToRoom = () => {
     if (user.userType === "admin") {
       socket.emit("identify", user.userType, user._id);
@@ -135,7 +135,7 @@ const DrawerItems = ({ toggleDrawer = () => {} }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { pathname } = useLocation()
-  const userType = store.getState().user.value.userType
+  const userType = store.getState().persistedReducer.value.userType
   const links = userType === 'admin' ? adminlinks : driverlinks
   const activeLinkStyle = {
     bgcolor : 'rgba(0, 0, 0, 0.04)'

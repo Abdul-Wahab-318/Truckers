@@ -7,8 +7,7 @@ import CustomDropdown from '../../Components/CustomDropdown/CustomDropdown.js'
 import CustomDataGrid from '../../Components/CustomDataGrid/CustomDataGrid.js'
 import { useTheme} from '@mui/material'
 import axiosInstance from '../../axiosInstance'
-import { Link } from 'react-router-dom/dist'
-import store from '../../redux/store/store.js'
+import {store} from '../../redux/store/store.js'
 
 export default function DriverDashboard() {
 
@@ -36,7 +35,7 @@ export default function DriverDashboard() {
 
 const ShipmentGrid = () => {
 
-    const vehicleID = store.getState().user.value.vehicleAssigned
+    const vehicleID = store.getState().persistedReducer.value.vehicleAssigned
     const theme = useTheme()
     const editBtnStyle = {
         fontSize : '14px' , textTransform:'capitalize' , p:'5px 10px' , 
