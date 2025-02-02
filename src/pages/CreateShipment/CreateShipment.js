@@ -9,7 +9,7 @@ import axiosInstance from '../../axiosInstance';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import { ToastContainer , toast } from 'react-toastify'
 export default function CreateShipment() {
-
+    console.log("key : " , process.env.REACT_APP_API_KEY)
     let [route , setRoute] = useState("")
     let [uniqueRoutes , setUniqueRoutes] = useState([])
     let [ from , setFrom ] = useState('')

@@ -1,6 +1,7 @@
 import React , { useEffect , useState } from 'react'
 import CustomDataGrid from '../../Components/CustomDataGrid/CustomDataGrid'
-import { Button, Switch , Stack, useTheme} from '@mui/material'
+import {useTheme} from '@mui/material'
+import CircularProgress from '@mui/material/CircularProgress';
 import axiosInstance from '../../axiosInstance'
 import { Link } from 'react-router-dom/dist'
 import { socket } from '../../socket'
@@ -26,6 +27,7 @@ export default function ShipmentGrid() {
 
     const [ filter , setFilter ] = useState("pending")
     const [ shipments , setShipments ] = useState([])
+    const [isLoading , setIsLoading ] = useState(false)
 
     const columns = [
         {
@@ -55,20 +57,6 @@ export default function ShipmentGrid() {
             headerName: 'Current Status',
             editable: false,
             flex : 1
-        },
-        {
-            field: 'track',
-            headerName: 'Track',
-            editable: true,
-            renderCell : (params) => {
-                return (
-                    <Link to={'/Shipment-map/' + params.row._id}
-                     sx={{...editBtnStyle}}>
-                        View
-                    </Link>
-                )
-            },
-            flex : 1
         }
     ]
 
@@ -76,12 +64,16 @@ export default function ShipmentGrid() {
     useEffect(() => {
         ( async () => {
             try{
+                setIsLoading(true)
                 const { data } = await axiosInstance.get("/shipment/shipments") 
                 setShipments( data.data )
             }
             catch(err)
             {
                 console.log(err)
+            }
+            finally{
+                setIsLoading(false)
             }
         })()
     } , [])
@@ -136,7 +128,7 @@ export default function ShipmentGrid() {
 
 
 
-    if ( shipments.length === 0 )
+    if ( shipments.length === 0 && !isLoading )
         return <h4 style={{'textAlign':'center' , 'margin':0}}>No Shipments</h4>
 
     const handleChange = (e) => {
@@ -165,7 +157,12 @@ export default function ShipmentGrid() {
                 </FormControl>
             </div>
         </div>
-        <CustomDataGrid columns={columns} rows={shipments.filter( shipment => shipment.status === filter )} style={gridStyle} />
+        {
+            isLoading ? <CircularProgress sx={{'marginX' : 'auto'}} /> 
+            : 
+            <CustomDataGrid columns={columns} rows={shipments.filter( shipment => shipment.status === filter )} style={gridStyle} />
+        }
+        
         <ToastContainer/>
     </>
   )

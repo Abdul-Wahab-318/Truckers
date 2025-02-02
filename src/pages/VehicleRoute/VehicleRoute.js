@@ -36,7 +36,7 @@ function VehicleRoute() {
     const directionService = new window.google.maps.DirectionsService()
     const results = await directionService.route({
       origin : from ,
-      destination : waypoints.length === 0 ? to : waypoints[ waypoints.length - 1 ]?.location,
+      destination : to,
       waypoints : waypoints ,
       optimizeWaypoints: true,
       travelMode  : window.google.maps.TravelMode.DRIVING

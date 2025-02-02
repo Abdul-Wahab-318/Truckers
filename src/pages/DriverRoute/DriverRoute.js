@@ -40,8 +40,8 @@ function DriverRoute() {
 
     const directionService = new window.google.maps.DirectionsService()
     const results = await directionService.route({
-      origin : from ,
-      destination : waypoints.length === 0 ? to : waypoints[ waypoints.length - 1 ]?.location,
+      origin : currentLocation.lat ? currentLocation : from ,
+      destination : to,
       waypoints : waypoints ,
       optimizeWaypoints: true,
       travelMode  : window.google.maps.TravelMode.DRIVING
@@ -96,7 +96,7 @@ function DriverRoute() {
 
     })() ;
 
-  },[currentLocation])
+  },[])
 
 
   //calculate route when google script is properly loaded
@@ -104,7 +104,7 @@ function DriverRoute() {
     if( vehicleLoaded && wayPointsloaded )
       calculateRoute( ( currentLocation ? currentLocation : vehicle.from ) , vehicle.to , waypoints )
   } , 
-  [window.google , window.google?.maps , window.google?.maps?.DirectionsService , vehicleLoaded, wayPointsloaded])
+  [window.google , window.google?.maps , window.google?.maps?.DirectionsService , vehicleLoaded, wayPointsloaded , currentLocation])
 
 
   return (isLoaded )? (

@@ -22,11 +22,14 @@ export default function Stats() {
         }
     ])
     const images = [ pendingIcon , deliveredIcon , routeIcon ]
+    const [isLoading , setIsLoading ] = useState(false)
+
     useEffect(() => {
 
         ( async ()=>{
 
             try{
+                setIsLoading(true)
                 let { data } = await axiosInstance.get("/shipment/shipment-stats")
                 setStats(data.data)
                 console.log(data)    
@@ -34,6 +37,9 @@ export default function Stats() {
             catch(err)
             {
                 console.log(err)
+            }
+            finally{
+                setIsLoading(false)
             }
 
         })()
@@ -60,7 +66,7 @@ export default function Stats() {
                             }
                             <Box>
                                 <Typography variant='h6' sx={{textTransform:'uppercase' ,fontSize:'12px' , color:"#8E8E8E"}}> { stat.label } </Typography>
-                                <Typography variant='h6' sx={{fontWeight:'bold'}} > { stat.data } </Typography>
+                                <Typography variant='h6' sx={{fontWeight:'bold'}} > { isLoading ? "loading..." : stat.data } </Typography>
                             </Box>
                         </Box>
                     )

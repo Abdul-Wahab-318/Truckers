@@ -77,7 +77,7 @@ export default function UserDashboardLayout() {
   return (
     <Box sx={{ display: 'flex' }} >
       
-      <CssBaseline />
+
       <>
         {/* SIDE BAR FOR SCREENS >= LG */}
         <Drawer
@@ -119,10 +119,7 @@ export default function UserDashboardLayout() {
         </Drawer>
 
       </>
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, p: 5.5 }}
-      >
+      <Box component="main" sx={{ flexGrow: 1, p: 5.5 }}>
         <Toolbar /> 
         <Outlet/>
       </Box>

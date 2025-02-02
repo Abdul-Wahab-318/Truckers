@@ -77,9 +77,11 @@ export default function CreateVehicle() {
                 onChange={(e)=>handleSelectChange( setFrom , e.target.value)}
                 
                 >
-                <MenuItem value={'attock'}>attock</MenuItem>
                 <MenuItem value={'islamabad'}>islamabad</MenuItem>
-                <MenuItem value={'rawalpindi'}>rawalpindi</MenuItem>
+                <MenuItem value={'lahore'}>lahore</MenuItem>
+                <MenuItem value={'sahiwal'}>sahiwal</MenuItem>
+                <MenuItem value={'attock'}>attock</MenuItem>
+                <MenuItem value={'gujranwala'}>gujranwala</MenuItem>
             </Select>
         </FormControl>
 
@@ -94,9 +96,11 @@ export default function CreateVehicle() {
             onChange={(e)=>handleSelectChange(setTo , e.target.value)}
             
             >
-                <MenuItem value={'attock'}>attock</MenuItem>
                 <MenuItem value={'islamabad'}>islamabad</MenuItem>
-                <MenuItem value={'rawalpindi'}>rawalpindi</MenuItem>
+                <MenuItem value={'lahore'}>lahore</MenuItem>
+                <MenuItem value={'sahiwal'}>sahiwal</MenuItem>
+                <MenuItem value={'attock'}>attock</MenuItem>
+                <MenuItem value={'gujranwala'}>gujranwala</MenuItem>
             </Select>
         </FormControl>
 
